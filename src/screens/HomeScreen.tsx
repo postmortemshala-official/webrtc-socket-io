@@ -19,11 +19,11 @@ const HomeScreen = ({ navigation }: any) => {
 
   const handleCreate = () => {
     console.log('handleCreate');
-    navigation.navigate(Navigate.CREATE_MEETING_SCREEN);
   };
-
+  
   const handleJoin = () => {
     console.log('handleJoin');
+    navigation.navigate(Navigate.JOIN_MEETING_SCREEN);
     // navigation.navigate(Navigate.JOIN_MEETING_SCREEN);
   };
 

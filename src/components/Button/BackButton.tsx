@@ -5,7 +5,7 @@ const BackButton = ({ navigation }: any) => {
     navigation.goBack();
   };
   return (
-    <TouchableOpacity onPress={goBack} style={{ marginTop:'12%', marginLeft:12 }}>
+    <TouchableOpacity onPress={goBack} style={{ paddingTop:'2%', marginLeft:12 }}>
       <Image
         source={require("../../assets/leftArrorw.png")}
         style={{ width: 50, height: 50, }}

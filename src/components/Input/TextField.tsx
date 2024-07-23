@@ -84,6 +84,7 @@ const TextField: React.FC<Props> = props => {
     <View style={style}>
       <TextInput
       placeholder={placeholder}
+      placeholderTextColor={Color.midGray}
         // onChangeText={text => setInputValue(text)}
         onChangeText={handleInputChange}
         value={value}

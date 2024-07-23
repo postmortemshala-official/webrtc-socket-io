@@ -20,6 +20,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../utils/globalstyles';
 import Navigate from '../utils/enum';
 
+
+
 const { width } = Dimensions.get("screen");
 
 const CreateMeetingScreen = ({ navigation, route }: any) => {
@@ -32,7 +34,7 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
   const [statusMic, setStatusMic] = useState<boolean>(false);
   const [flashMode, setFlashMode] = useState<boolean>(false);
   const [rotation] = useState(new Animated.Value(0));
-  
+
   // Create a reference for the profile container
   const profileRef = useRef<View>(null);
 
@@ -190,7 +192,7 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
       <TouchableOpacity style={{ marginRight: 13 }} onPress={switchToMainStream}>
         <View style={styles.profileContainer} ref={profileRef}>
           {localStreamURL ? (
-            <RTCView streamURL={localStreamURL}  style={styles.localStream} />
+            <RTCView streamURL={localStreamURL} style={styles.localStream} />
           ) : (
             <FontAwesome5 name="user-astronaut" size={115} color="black" />
           )}
