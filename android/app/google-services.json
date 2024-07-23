@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "139120121543",
+    "firebase_url": "https://seekmeet-f13be-default-rtdb.firebaseio.com",
+    "project_id": "seekmeet-f13be",
+    "storage_bucket": "seekmeet-f13be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139120121543:android:d22b67539f382a720f10e2",
+        "android_client_info": {
+          "package_name": "com.anonymous.seekmeet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ4SLfptmIQPzZLfB6aMggWXhpVeGLAgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139120121543:android:428da01f9cb3072d0f10e2",
+        "android_client_info": {
+          "package_name": "com.seek_meet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ4SLfptmIQPzZLfB6aMggWXhpVeGLAgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139120121543:android:ab204ba1126862040f10e2",
+        "android_client_info": {
+          "package_name": "com.seekmeeting"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ4SLfptmIQPzZLfB6aMggWXhpVeGLAgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
