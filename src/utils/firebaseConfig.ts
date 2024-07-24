@@ -1,6 +1,7 @@
 // firebase.js
-import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKspdx9udn446GUAxLt7DSjM52lRJkYuw",
@@ -16,7 +17,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Realtime Database and get a reference to the service
+// Initialize Firestore
+const firestore = getFirestore(app);
+
+// Initialize Realtime Database
 const database = getDatabase(app);
 
-export { app, database };
+export { app, database, firestore };

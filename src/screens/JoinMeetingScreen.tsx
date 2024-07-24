@@ -37,7 +37,6 @@ const JoinMeetingScreen = ({ navigation }: any) => {
 
   console.log("My recent copied value ==> ", inputValue);
 
-  const snapPoints = useMemo(() => ["25%", "1%", "90%"], []);
 
   // callbacks
 

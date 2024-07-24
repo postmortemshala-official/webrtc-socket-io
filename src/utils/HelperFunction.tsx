@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 
 const HelperFunctions = {
@@ -31,10 +32,18 @@ const HelperFunctions = {
       result += characters.charAt(randomIndex);
     }
     const meeting_id= `${result.substring(0, 3)}-${result.substring(3, 6)}-${result.substring(6, 9)}`
-    console.log("Helper module ==> ",meeting_id);
+    // console.log("Helper module ==> ",meeting_id);
     return meeting_id;
 
   },
+
+   TimeCounter :() => {
+   
+      
+     return "0.0.0";
+
+    
+  }
    
 
 

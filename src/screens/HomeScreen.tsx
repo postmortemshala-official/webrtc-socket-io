@@ -41,7 +41,8 @@ const HomeScreen = ({ navigation }: any) => {
 
       // Set data at the generated key
       await set(newUserRef, userData);
-      console.log('Data written successfully');
+      console.info('Data written successfully');
+      console.info('Meeting id ==> ', meeting_id);
       ToastAndroid.show(`Meeting ID : ${meeting_id}`, ToastAndroid.SHORT);
     } catch (error) {
       console.error('Error writing data:', error);

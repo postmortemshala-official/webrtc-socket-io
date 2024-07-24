@@ -4,6 +4,8 @@ import { Button, View, StyleSheet } from "react-native";
 import { getDatabase, ref, set, push } from "firebase/database";
 import { database } from "../utils/firebaseConfig";
 import HelperFunctions from "../utils/HelperFunction";
+import Dummy from "../components/Dummy";
+import JoinDummy from "../components/JoinDummy";
 
 interface User {
   name: string;
@@ -40,9 +42,12 @@ const TestScreen: React.FC = () => {
     }
   };
 
+
   return (
     <View style={styles.container}>
-      <Button title="Send Data to Firebase Database" onPress={writeUserData} />
+      {/* <Button title="Send Data to Firebase Database" onPress={writeUserData} /> */}
+      <Dummy/>
+      <JoinDummy/>
     </View>
   );
 };
@@ -50,8 +55,8 @@ const TestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
 });
 

@@ -66,13 +66,9 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
   };
 
 
-  useEffect(() => {
-    readUserData (meeting_id)
-  }, []);
 
 
- 
- 
+
   // Start or restart the media stream
   const startStream = async (cameraType: boolean) => {
     if (stream) {
@@ -110,7 +106,7 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
       await startStream(facing);
     }
   };
- 
+
   // Toggle microphone state
   const toggleMic = () => {
     setStatusMic(prev => !prev);
@@ -135,7 +131,8 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
   // Copy meeting ID to clipboard
   const copyToClipboard = async () => {
     // Clipboard.setString('meeting-id');
-    ToastAndroid.show("Meeting ID copied to clipboard!", ToastAndroid.SHORT);
+    
+    ToastAndroid.show(`Meeting ID copied : ${meeting_id}`, ToastAndroid.SHORT);
   };
 
   // Function to toggle between profile container and main stream
@@ -146,41 +143,54 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
   };
 
 
-    // Handle WebRTC setup
-    useEffect(() => {
-      const startWebRTC = async () => {
-        const hasPermissions = await HelperFunctions.requestPermissions();
-        if (!hasPermissions) {
-          console.log('Permissions not granted');
-          return;
+  const timeCounter = HelperFunctions.TimeCounter()
+
+  console.log("timeCounter ==> ", timeCounter);
+
+
+
+
+  // Handle WebRTC setup
+  useEffect(() => {
+    const startWebRTC = async () => {
+      const hasPermissions = await HelperFunctions.requestPermissions();
+      if (!hasPermissions) {
+        console.log('Permissions not granted');
+        return;
+      }
+
+      await startStream(facing);
+
+      peerConnection.current.onicecandidate = (event: any) => {
+        if (event.candidate) {
+          // Handle ICE candidates
         }
-  
-        await startStream(facing);
-  
-        peerConnection.current.onicecandidate = (event: any) => {
-          if (event.candidate) {
-            // Handle ICE candidates
-          }
-        };
-  
-        peerConnection.current.ontrack = (event: any) => {
-          // remote stream 
-          // Handle remote stream
-        };
-  
-        const offer = await peerConnection.current.createOffer();
-        await peerConnection.current.setLocalDescription(offer);
-        // Send the offer to the remote peer
       };
-  
-      startWebRTC();
-  
-      return () => {
-        stream?.getTracks().forEach(track => track.stop());
-        peerConnection.current.close();
+
+      peerConnection.current.ontrack = (event: any) => {
+        // remote stream 
+        // Handle remote stream
       };
-    }, [facing]);
-  
+
+      const offer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(offer);
+      // Send the offer to the remote peer
+    };
+
+    startWebRTC();
+
+    return () => {
+      stream?.getTracks().forEach(track => track.stop());
+      peerConnection.current.close();
+    };
+  }, [facing]);
+
+  // Read Database using function 
+  useEffect(() => {
+    readUserData(meeting_id)
+  }, []);
+
+
 
   return (
     <View style={{ flex: 1, position: "relative" }}>
@@ -227,7 +237,10 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
             <Text style={styles.infoText}>Meet Id: <Text style={styles.infoTextBold}>{data.meet_id}</Text></Text>
           </View>
 
-          <View style={{ gap: 10, flexDirection: 'row' }}>
+          <View style={{ gap: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+
+            <Text style={{ color: Color.white, width: '31%',textAlign:'right' }}>{timeCounter}</Text>
+
             <TouchableOpacity onPress={toggleFlash}>
               <MaterialIcons name={flashMode ? "flash-off" : "flash-on"} size={24} color={Color.white} />
             </TouchableOpacity>
