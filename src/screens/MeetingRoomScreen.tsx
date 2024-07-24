@@ -19,13 +19,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../utils/globalstyles';
 import Navigate from '../utils/enum';
+import HelperFunctions from '../utils/HelperFunction';
+import { database } from "../utils/firebaseConfig";
+import { get, ref } from 'firebase/database';
 
 
 
 const { width } = Dimensions.get("screen");
 
-const CreateMeetingScreen = ({ navigation, route }: any) => {
-  const { name } = route.params;
+const MeetingRoomScreen = ({ navigation, route }: any) => {
+  const { meeting_id } = route.params;
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [localStreamURL, setLocalStreamURL] = useState<string | null>(null);
   const peerConnection = useRef(new RTCPeerConnection());
@@ -34,20 +37,42 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
   const [statusMic, setStatusMic] = useState<boolean>(false);
   const [flashMode, setFlashMode] = useState<boolean>(false);
   const [rotation] = useState(new Animated.Value(0));
-
-  // Create a reference for the profile container
   const profileRef = useRef<View>(null);
 
-  // Request permissions
-  const requestPermissions = async () => {
-    const statuses = await requestMultiple([
-      PERMISSIONS.ANDROID.CAMERA,
-      PERMISSIONS.ANDROID.RECORD_AUDIO,
-    ]);
-    return statuses[PERMISSIONS.ANDROID.CAMERA] === RESULTS.GRANTED &&
-      statuses[PERMISSIONS.ANDROID.RECORD_AUDIO] === RESULTS.GRANTED;
+  // get data from Firebase 
+  const [data, setData] = useState<Object | any>({});
+
+  const readUserData = async (meeting_id: string) => {
+    try {
+      // Create a reference to the data location
+      const userRef = ref(database, `seek-meet/creator`);
+      const snapshot = await get(userRef);
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        // Find the data with the specific meeting_id
+        const user = Object.values(data).find((user: any) => user.meet_id === meeting_id);
+        if (user) {
+          console.log('User data:', user);
+          setData(user)
+        } else {
+          console.log('No user found with the given meeting_id');
+        }
+      } else {
+        console.log('No data available');
+      }
+    } catch (error) {
+      console.error('Error reading data:', error);
+    }
   };
 
+
+  useEffect(() => {
+    readUserData (meeting_id)
+  }, []);
+
+
+ 
+ 
   // Start or restart the media stream
   const startStream = async (cameraType: boolean) => {
     if (stream) {
@@ -64,41 +89,6 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
     setLocalStreamURL(localStream.toURL());
     localStream.getTracks().forEach(track => peerConnection.current.addTrack(track, localStream));
   };
-
-  // Handle WebRTC setup
-  useEffect(() => {
-    const startWebRTC = async () => {
-      const hasPermissions = await requestPermissions();
-      if (!hasPermissions) {
-        console.log('Permissions not granted');
-        return;
-      }
-
-      await startStream(facing);
-
-      peerConnection.current.onicecandidate = (event: any) => {
-        if (event.candidate) {
-          // Handle ICE candidates
-        }
-      };
-
-      peerConnection.current.ontrack = (event: any) => {
-        // remote stream 
-        // Handle remote stream
-      };
-
-      const offer = await peerConnection.current.createOffer();
-      await peerConnection.current.setLocalDescription(offer);
-      // Send the offer to the remote peer
-    };
-
-    startWebRTC();
-
-    return () => {
-      stream?.getTracks().forEach(track => track.stop());
-      peerConnection.current.close();
-    };
-  }, [facing]);
 
   // Toggle camera facing
   const toggleCameraFacing = async () => {
@@ -120,13 +110,7 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
       await startStream(facing);
     }
   };
-
-  // Rotate animation
-  const rotate = rotation.interpolate({
-    inputRange: [-1, 1],
-    outputRange: ["-360deg", "360deg"],
-  });
-
+ 
   // Toggle microphone state
   const toggleMic = () => {
     setStatusMic(prev => !prev);
@@ -160,6 +144,43 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
       profileRef.current.setNativeProps({ style: { display: 'none' } });
     }
   };
+
+
+    // Handle WebRTC setup
+    useEffect(() => {
+      const startWebRTC = async () => {
+        const hasPermissions = await HelperFunctions.requestPermissions();
+        if (!hasPermissions) {
+          console.log('Permissions not granted');
+          return;
+        }
+  
+        await startStream(facing);
+  
+        peerConnection.current.onicecandidate = (event: any) => {
+          if (event.candidate) {
+            // Handle ICE candidates
+          }
+        };
+  
+        peerConnection.current.ontrack = (event: any) => {
+          // remote stream 
+          // Handle remote stream
+        };
+  
+        const offer = await peerConnection.current.createOffer();
+        await peerConnection.current.setLocalDescription(offer);
+        // Send the offer to the remote peer
+      };
+  
+      startWebRTC();
+  
+      return () => {
+        stream?.getTracks().forEach(track => track.stop());
+        peerConnection.current.close();
+      };
+    }, [facing]);
+  
 
   return (
     <View style={{ flex: 1, position: "relative" }}>
@@ -202,8 +223,8 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
       <View style={{ position: "absolute", width: "100%", height: "100%" }}>
         <View style={styles.topOptions}>
           <View>
-            <Text style={styles.infoText}>Created By: <Text style={styles.infoTextBold}>{name}</Text></Text>
-            <Text style={styles.infoText}>Meet Id: <Text style={styles.infoTextBold}>123-456-789</Text></Text>
+            <Text style={styles.infoText}>Created By: <Text style={styles.infoTextBold}>{data.name}</Text></Text>
+            <Text style={styles.infoText}>Meet Id: <Text style={styles.infoTextBold}>{data.meet_id}</Text></Text>
           </View>
 
           <View style={{ gap: 10, flexDirection: 'row' }}>
@@ -212,7 +233,7 @@ const CreateMeetingScreen = ({ navigation, route }: any) => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={toggleCameraFacing} disabled={!cameraOn}>
-              <Animated.View style={{ transform: [{ rotate }] }}>
+              <Animated.View  >
                 <Entypo name="cycle" size={24} color={Color.white} />
               </Animated.View>
             </TouchableOpacity>
@@ -326,4 +347,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateMeetingScreen;
+export default MeetingRoomScreen;

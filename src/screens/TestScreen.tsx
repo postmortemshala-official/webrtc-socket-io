@@ -1,29 +1,48 @@
+// TestScreen.tsx
 import React from "react";
-import { Button, TouchableOpacity, View, StyleSheet } from "react-native";
-import { getDatabase, ref, set } from "firebase/database";
-import app from "../utils/firebaseConfig"; // Ensure the correct path to your firebaseConfig
+import { Button, View, StyleSheet } from "react-native";
+import { getDatabase, ref, set, push } from "firebase/database";
+import { database } from "../utils/firebaseConfig";
+import HelperFunctions from "../utils/HelperFunction";
 
-const TestScreen = () => {
-  const writeUserData = (userId: any, name: any, email: any, imageUrl: any) => {
-    const db = getDatabase(app);
-    set(ref(db, 'users/' + userId), {
-      username: name,
-      email: email,
-      profile_picture: imageUrl
-    })
-    .then(() => {
-      console.log("Data saved successfully!");
-    })
-    .catch((error) => {
-      console.error("Error saving data: ", error);
-    });
+interface User {
+  name: string;
+  id: string;
+  meet_id: string;
+  createdAt: string;
+}
+
+const TestScreen: React.FC = () => {
+
+  const meeting_id=HelperFunctions.generateRandomId(9)
+  console.log("Testor side meet_id ==> ", meeting_id);
+  
+
+    
+  const writeUserData = async () => {
+    try {
+      // Generate a unique key using push()
+      const newUserRef = push(ref(database, 'seek-meet/creator'));
+
+      // Define user data
+      const userData: User = {
+        name: 'John Doe',
+        meet_id:meeting_id,
+        id: newUserRef.key as string,
+        createdAt:new Date().toString()
+      };
+
+      // Set data at the generated key
+      await set(newUserRef, userData);
+      console.log('Data written successfully');
+    } catch (error) {
+      console.error('Error writing data:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => writeUserData(123, 'Anshu', 'anshu@gmail.com', 'NAN_img')}>
-        <Button title="Send Data to Firebase Database" onPress={() => {}} />
-      </TouchableOpacity>
+      <Button title="Send Data to Firebase Database" onPress={writeUserData} />
     </View>
   );
 };

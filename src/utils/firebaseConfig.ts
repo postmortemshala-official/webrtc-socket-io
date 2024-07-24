@@ -1,11 +1,7 @@
-// Import the functions you need from the SDKs you need
+// firebase.js
 import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDKspdx9udn446GUAxLt7DSjM52lRJkYuw",
   authDomain: "seekmeet-f13be.firebaseapp.com",
@@ -20,4 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export default app
+// Initialize Realtime Database and get a reference to the service
+const database = getDatabase(app);
+
+export { app, database };

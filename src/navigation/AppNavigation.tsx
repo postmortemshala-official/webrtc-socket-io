@@ -3,11 +3,11 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import Navigate from '../utils/enum';
-import app from '../utils/firebaseConfig'; // Adjust the import according to your file structure
+import {app} from '../utils/firebaseConfig'; // Adjust the import according to your file structure
 import HomeScreen from '../screens/HomeScreen';
-import CreateMeetingScreen from '../screens/CreateMeetingScreen';
 import JoinMeetingScreen from '../screens/JoinMeetingScreen';
 import TestScreen from '../screens/TestScreen';
+import MeetingRoomScreen from '../screens/MeetingRoomScreen';
 
 
 
@@ -87,7 +87,7 @@ export default function AppNavigation() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={Navigate.HOME_SCREEN}>
       <Stack.Screen name={Navigate.HOME_SCREEN} component={HomeScreen} />
-      <Stack.Screen name={Navigate.CREATE_MEETING_SCREEN} component={CreateMeetingScreen} />
+      <Stack.Screen name={Navigate.MEETING_ROOM_SCREEN} component={MeetingRoomScreen} />
       <Stack.Screen name={Navigate.JOIN_MEETING_SCREEN} component={JoinMeetingScreen} />
       <Stack.Screen name={'TestScreen'} component={TestScreen} />
     </Stack.Navigator>

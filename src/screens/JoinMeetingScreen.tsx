@@ -63,17 +63,17 @@ const JoinMeetingScreen = ({ navigation }: any) => {
     setModalVisible(true)
 
     setTimeout(() => {
-      navigation.replace(Navigate.CREATE_MEETING_SCREEN, { name: userName })
+      navigation.replace(Navigate.MEETING_ROOM_SCREEN, { name: userName })
       setModalVisible(true)
 
     }, 5000);
   }
 
   useEffect(() => {
-    if (meetId.length < 9 && userName.length < 2) {
+    if (meetId.length < 9 && userName.length <3) {
       setButtonColor(Color.darkGray);
       setDisableBtn(true);
-    } else if (meetId.length >= 9 && userName.length > 2) {
+    } else if (meetId.length >= 9 && userName.length >= 2) {
       setButtonColor(Color.blue);
       setDisableBtn(false);
     }
