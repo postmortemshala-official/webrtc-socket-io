@@ -50,6 +50,7 @@ const HomeScreen = ({ navigation }: any) => {
       <View style={{ flexDirection: 'row', gap: width * 0.05 }}>
         <PrimaryButton onPress={() => setModalVisible(true)} text='Create' />
         <SecondaryButton onPress={handleJoin} text='Join' />
+        <SecondaryButton onPress={()=>{navigation.navigate('TestScreen')}} text='Test' />
       </View>
 
       <Modal

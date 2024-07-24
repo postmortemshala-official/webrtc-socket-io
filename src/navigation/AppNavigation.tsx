@@ -7,6 +7,7 @@ import app from '../utils/firebaseConfig'; // Adjust the import according to you
 import HomeScreen from '../screens/HomeScreen';
 import CreateMeetingScreen from '../screens/CreateMeetingScreen';
 import JoinMeetingScreen from '../screens/JoinMeetingScreen';
+import TestScreen from '../screens/TestScreen';
 
 
 
@@ -88,6 +89,7 @@ export default function AppNavigation() {
       <Stack.Screen name={Navigate.HOME_SCREEN} component={HomeScreen} />
       <Stack.Screen name={Navigate.CREATE_MEETING_SCREEN} component={CreateMeetingScreen} />
       <Stack.Screen name={Navigate.JOIN_MEETING_SCREEN} component={JoinMeetingScreen} />
+      <Stack.Screen name={'TestScreen'} component={TestScreen} />
     </Stack.Navigator>
   );
 }
