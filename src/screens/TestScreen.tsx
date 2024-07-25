@@ -47,7 +47,7 @@ const TestScreen: React.FC = () => {
     <View style={styles.container}>
       {/* <Button title="Send Data to Firebase Database" onPress={writeUserData} /> */}
       <Dummy/>
-      <JoinDummy/>
+      {/* <JoinDummy/> */}
     </View>
   );
 };

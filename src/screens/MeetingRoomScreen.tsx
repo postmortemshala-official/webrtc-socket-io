@@ -23,14 +23,13 @@ import HelperFunctions from '../utils/HelperFunction';
 import { database } from "../utils/firebaseConfig";
 import { get, ref } from 'firebase/database';
 
-
-
 const { width } = Dimensions.get("screen");
 
 const MeetingRoomScreen = ({ navigation, route }: any) => {
   const { meeting_id } = route.params;
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [localStreamURL, setLocalStreamURL] = useState<string | null>(null);
+  const [mainStreamURL, setMainStreamURL] = useState<string | null>(null);
   const peerConnection = useRef(new RTCPeerConnection());
   const [cameraOn, setCameraOn] = useState<boolean>(true);
   const [facing, setFacing] = useState<boolean>(true);
@@ -44,12 +43,10 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
 
   const readUserData = async (meeting_id: string) => {
     try {
-      // Create a reference to the data location
       const userRef = ref(database, `seek-meet/creator`);
       const snapshot = await get(userRef);
       if (snapshot.exists()) {
         const data = snapshot.val();
-        // Find the data with the specific meeting_id
         const user = Object.values(data).find((user: any) => user.meet_id === meeting_id);
         if (user) {
           console.log('User data:', user);
@@ -65,11 +62,6 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
     }
   };
 
-
-
-
-
-  // Start or restart the media stream
   const startStream = async (cameraType: boolean) => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -86,7 +78,6 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
     localStream.getTracks().forEach(track => peerConnection.current.addTrack(track, localStream));
   };
 
-  // Toggle camera facing
   const toggleCameraFacing = async () => {
     if (!cameraOn) {
       ToastAndroid.show("Please turn on the camera before switching.", ToastAndroid.SHORT);
@@ -96,7 +87,6 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
     await startStream(!facing);
   };
 
-  // Toggle camera on/off
   const handleToggleCamera = async () => {
     setCameraOn(prev => !prev);
     if (cameraOn) {
@@ -107,7 +97,6 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
     }
   };
 
-  // Toggle microphone state
   const toggleMic = () => {
     setStatusMic(prev => !prev);
     if (stream) {
@@ -116,41 +105,27 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
     }
   };
 
-  // End call and navigate
   const toggleCall = () => {
     console.log("Call ended");
     navigation.navigate(Navigate.HOME_SCREEN);
   };
 
-  // Toggle flash mode
   const toggleFlash = () => {
     console.log("Flash mode : ", flashMode);
     setFlashMode(prev => !prev);
   };
 
-  // Copy meeting ID to clipboard
   const copyToClipboard = async () => {
-    // Clipboard.setString('meeting-id');
-    
     ToastAndroid.show(`Meeting ID copied : ${meeting_id}`, ToastAndroid.SHORT);
   };
 
-  // Function to toggle between profile container and main stream
   const switchToMainStream = () => {
-    if (profileRef.current) {
-      profileRef.current.setNativeProps({ style: { display: 'none' } });
-    }
+    setMainStreamURL(localStreamURL);
+    setLocalStreamURL(mainStreamURL);
   };
 
+  const timeCounter = HelperFunctions.TimeCounter();
 
-  const timeCounter = HelperFunctions.TimeCounter()
-
-  console.log("timeCounter ==> ", timeCounter);
-
-
-
-
-  // Handle WebRTC setup
   useEffect(() => {
     const startWebRTC = async () => {
       const hasPermissions = await HelperFunctions.requestPermissions();
@@ -185,16 +160,14 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
     };
   }, [facing]);
 
-  // Read Database using function 
   useEffect(() => {
     readUserData(meeting_id)
   }, []);
 
-
-
   return (
     <View style={{ flex: 1, position: "relative" }}>
-      <RTCView streamURL={localStreamURL || ''} objectFit={'cover'} style={styles.rtcView} />
+      {localStreamURL && <RTCView streamURL={localStreamURL} objectFit={'cover'} mirror={true} style={styles.rtcView} />}
+      {mainStreamURL && <RTCView streamURL={mainStreamURL} objectFit={'cover'} mirror={true} style={[styles.rtcView, { position: 'absolute', top: 0, left: 0 }]} />}
 
       {!cameraOn && statusMic && (
         <View style={styles.closedCameraContainer}>
@@ -221,9 +194,14 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
       )}
 
       <TouchableOpacity style={{ marginRight: 13 }} onPress={switchToMainStream}>
-        <View style={styles.profileContainer} ref={profileRef}>
+        <View 
+        style={styles.profileContainer} 
+        ref={profileRef}>
           {localStreamURL ? (
-            <RTCView streamURL={localStreamURL} style={styles.localStream} />
+            <>
+              <Text style={{color:'yellow', fontSize:25}}>LocalStream</Text>
+              <RTCView streamURL={localStreamURL} style={styles.localStream} mirror={true} />
+            </>
           ) : (
             <FontAwesome5 name="user-astronaut" size={115} color="black" />
           )}
@@ -238,15 +216,12 @@ const MeetingRoomScreen = ({ navigation, route }: any) => {
           </View>
 
           <View style={{ gap: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-
-            <Text style={{ color: Color.white, width: '31%',textAlign:'right' }}>{timeCounter}</Text>
-
+            <Text style={{ color: Color.white, width: '31%', textAlign: 'right' }}>{timeCounter}</Text>
             <TouchableOpacity onPress={toggleFlash}>
               <MaterialIcons name={flashMode ? "flash-off" : "flash-on"} size={24} color={Color.white} />
             </TouchableOpacity>
-
             <TouchableOpacity onPress={toggleCameraFacing} disabled={!cameraOn}>
-              <Animated.View  >
+              <Animated.View>
                 <Entypo name="cycle" size={24} color={Color.white} />
               </Animated.View>
             </TouchableOpacity>
